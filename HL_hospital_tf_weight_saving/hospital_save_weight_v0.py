@@ -8,7 +8,29 @@ Created on Wed Sep 11 12:10:57 2019
 import numpy as np
 import tensorflow as tf
 
-# loading files
+'''
+    loading files
+
+    input: 
+        all_backtround.txt  -> background
+        all_data.txt        -> data
+        label.txt           -> label
+    labels: 
+        0-> stand on corner
+        1-> sit on the middle of bed, as patient
+        2-> lie down on bed, middle
+        3-> lie down on bed, left
+        4-> lie down on bed, right
+        5-> seat on the side of bed, as visitor
+        6-> background 
+    output:
+        label_train     -> training label
+        data_train      -> training data
+
+        data_valid      -> valid data
+        label_valid     -> valid label
+'''
+
 all_background = np.loadtxt('all_background.txt')
 all_data = np.loadtxt('all_data.txt')
 all_label = np.loadtxt('label.txt')
@@ -28,26 +50,34 @@ data_valid = data[breakpoint:]
 label_valid = label[breakpoint:] 
 
 #%%
+'''
+    define Neural network graph
+
+    structure:
+        1. 1 layer
+        2. 18 input notes
+        3. 7 output classes
+'''
 class_num = 7
-tf.reset_default_graph();
-data_placeholder = tf.placeholder(tf.float32, shape=[None,all_data.shape[1]]);
-label_placeholder = tf.placeholder(tf.int64, shape=[None]);
+tf.reset_default_graph()
+data_placeholder = tf.placeholder(tf.float32, shape=[None,all_data.shape[1]])
+label_placeholder = tf.placeholder(tf.int64, shape=[None])
 
-x = data_placeholder;
-y = label_placeholder;
-#training_init_op = iterator.make_initializer(train_dataset);
-layer1 = tf.layers.dense(inputs=x,units=class_num,activation=None, name="layer1");
-#layer2 = tf.layers.dense(inputs=layer1, units=3, activation= None, name="layer2")
+x = data_placeholder
+y = label_placeholder
+
+layer1 = tf.layers.dense(inputs=x,units=class_num,activation=None, name="layer1")
+
 outputs = layer1
-loss = tf.nn.sparse_softmax_cross_entropy_with_logits(labels = y, logits = outputs);
+loss = tf.nn.sparse_softmax_cross_entropy_with_logits(labels = y, logits = outputs)
 
-optimizer = tf.train.AdamOptimizer().minimize(loss);
+optimizer = tf.train.AdamOptimizer().minimize(loss)
 
-prediction = tf.argmax(outputs,1);
-equality = tf.equal(prediction,y);
-accuracy = tf.reduce_mean(tf.cast(equality, tf.float32));
+prediction = tf.argmax(outputs,1)
+equality = tf.equal(prediction,y)
+accuracy = tf.reduce_mean(tf.cast(equality, tf.float32))
 
-init_op = tf.global_variables_initializer();
+init_op = tf.global_variables_initializer()
 
 confusion_matrix_reg = np.zeros([class_num,class_num])
 confusion_matrix_train =  np.zeros([class_num,class_num])
@@ -57,10 +87,10 @@ label_valid_sum = np.zeros(class_num)
 valid_accuracy = []
 
 with tf.Session() as sess:
-    sess.run(init_op);
+    sess.run(init_op)
     for i in range(200000):
-        train_acc_sum = 0;
-        valid_acc_sum = 0;
+        train_acc_sum = 0
+        valid_acc_sum = 0
         label_train_sum = np.zeros(class_num)
         label_valid_sum = np.zeros(class_num)
         confusion_matrix_reg = np.zeros([class_num,class_num])
