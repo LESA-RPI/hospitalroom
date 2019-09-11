@@ -7,6 +7,7 @@ Created on Wed Sep 11 12:10:57 2019
 
 import numpy as np
 import tensorflow as tf
+import pickle
 
 '''
     loading files
@@ -66,8 +67,12 @@ label_placeholder = tf.placeholder(tf.int64, shape=[None])
 x = data_placeholder
 y = label_placeholder
 
-layer1 = tf.layers.dense(inputs=x,units=class_num,activation=None, name="layer1")
+layer1 = tf.layers.dense(inputs=x,units=class_num,use_bias = True,activation=None, name="layer1")
 
+# collect weights
+with tf.variable_scope('layer1',reuse = True):
+    w = tf.get_variable('kernel')
+    b = tf.get_variable('bias')
 outputs = layer1
 loss = tf.nn.sparse_softmax_cross_entropy_with_logits(labels = y, logits = outputs)
 
@@ -95,20 +100,24 @@ with tf.Session() as sess:
         label_valid_sum = np.zeros(class_num)
         confusion_matrix_reg = np.zeros([class_num,class_num])
         
-
-
-        pre,_,acc = sess.run([prediction,optimizer,accuracy],feed_dict={data_placeholder:data_train, label_placeholder: label_train});
+        pre,_,acc = sess.run([prediction,optimizer,accuracy],feed_dict={data_placeholder:data_train, label_placeholder: label_train})
         for k in range(label_train.shape[0]):
             label_train_sum[label_train[k]] += 1
             confusion_matrix_reg[pre[k],label_train[k]] += 1
         confusion_matrix_train = confusion_matrix_reg/label_train_sum
-        print("Epoch: {}, train_accuracy:{}".format(i,acc)); 
+        print("Epoch: {}, train_accuracy:{}".format(i,acc)) 
         
         confusion_matrix_reg = np.zeros([class_num,class_num])
-        pre,acc = sess.run([prediction,accuracy],feed_dict={data_placeholder:data_valid, label_placeholder: label_valid});
+        bias,weight,pre,acc = sess.run([b,w,prediction,accuracy],feed_dict={data_placeholder:data_valid, label_placeholder: label_valid})
         for k in range(label_valid.shape[0]):
             label_valid_sum[label_valid[k]] += 1
             confusion_matrix_reg[pre[k],label_valid[k]] += 1
         confusion_matrix_valid = confusion_matrix_reg/label_valid_sum
-        print("Epoch: {}, valid_accuracy:{}".format(i,acc)); 
+        print("Epoch: {}, valid_accuracy:{}".format(i,acc)) 
 
+weight = np.array(weight)
+bias = np.array(bias)
+
+f = open('weights.txt','wb')
+pickle.dump([(weight,'weights'),(bias,'bias')],f)
+f.close()
