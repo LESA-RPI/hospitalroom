@@ -56,4 +56,4 @@ def layer1(x, Weights, biases):
 
 outputs = layer1(data,W,b)
 
-lable_estimate = np.argmax(outputs,axis = 1)
+label_estimate = np.argmax(outputs,axis = 1)
