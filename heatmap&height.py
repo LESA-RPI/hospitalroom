@@ -1,3 +1,8 @@
+"""
+like height_transfer.py, but this one is real time visualization.
+This program is used for transferring the data to direct distance from floor.
+This processing is very rough and cannot be used for practical use. More like my personal temporary stuff.
+"""
 try:
     from Tkinter import *
 except ImportError:
@@ -66,7 +71,7 @@ def format_transfer(orig_1x9):
 
 
 # %%
-# heat map functions
+# heat map functions, copy and edit from hospitalmap.py
 def pseudocolor(value, minval, maxval, palette):
     """ Maps given value to a linearly interpolated palette color. """
     max_index = len(palette) - 1

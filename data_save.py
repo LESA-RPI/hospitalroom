@@ -2,7 +2,7 @@
 this program is used for saving data. cannot run with real time visualization(hospitalmap.py)
 it requires same gateway setting up as hospitalmap.py
 there should be 4 output file: 3 txt file for 2 pods and 20x25 matrix and 1 video file for WebCam
-the name of 4 files should follow the naming rules in Readme.
+the name of 4 files should follow the naming rules in excel file.
 """
 
 import numpy as np
@@ -21,6 +21,7 @@ def check_same(array1, array2):
     return True
 
 
+# dealing the map into the required sequence
 def sort_map(orig_map):
     # the sort way is different from visualizing way
     # this is the original version, real time visualization requires corresponding with observation angle
@@ -38,10 +39,13 @@ def sort_map(orig_map):
 
 
 if __name__ == '__main__':
-    filename = input("filename1:")
-    filename_flat = input("filename2:")
-    filename_tof = input("filename TOF:")
-    filename_camera = input("filename camera:")
+    ## new input
+    subject_num = input("subject num:")
+    activity_num= input("activity num:")
+    filename = 'subject'+ subject_num + '_' + activity_num +'_0'
+    filename_flat = 'subject'+ subject_num + '_' + activity_num +'_1'
+    filename_tof = 'subject'+ subject_num + '_' + activity_num +'_tof'
+    filename_camera = 'subject'+ subject_num + '_' + activity_num +'_video'
     period = float(input("period:"))
     # video record initialization
     cap = cv2.VideoCapture(0)
@@ -52,7 +56,7 @@ if __name__ == '__main__':
     cv2.imshow('frame', frame)
 
     f = open(filename + ".txt", 'w')  # only save the distance data now
-    f2 = open(filename_flat + ".txt", 'w')  ###
+    f2 = open(filename_flat + ".txt", 'w')
     f3 = open(filename_tof + ".txt", 'w')
 
     with open('ArpaE.9pixel/data/all_data.json') as json_file:

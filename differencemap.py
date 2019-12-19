@@ -1,3 +1,11 @@
+"""
+single pod difference map.
+The processing is simple: blank(background)_data - current_data
+then visualize it.
+
+Since different activities' results from the subtraction is very different,
+you should edit the maxval in colorize function to statisfy current conditions.
+"""
 try:
     from Tkinter import *
 except ImportError:

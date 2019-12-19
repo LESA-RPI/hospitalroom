@@ -1,3 +1,8 @@
+"""
+This program is used for transferring the data to direct distance from floor.
+This processing is very rough and cannot be used for practical use. More like my personal temporary stuff.
+"""
+
 try:
     from Tkinter import *
 except ImportError:
@@ -10,12 +15,7 @@ global ratio
 global base_line
 global base_distance_0
 global base_distance_1
-'''
-maybe dont use the absolute value directly for transferring
-recognize the background as the actual measured value. like ground=0, bed= 0.77m
--------- based on the difference, determine the current height?
-a little fake????
-'''
+
 # right now based on the absolute value, the performance is accepted but not good enoght
 # it should use difference instead
 # right now use the first line as standard, should change to the average num
